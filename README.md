@@ -12,7 +12,6 @@ Website: https://flask.palletsprojects.com/en/2.2.x/
 - in windows, the `lsvirtualenv` command can be used to get list of virtual environments in system
 
 - install django using `pip install flask`
-- to get any specific version use `pip install django==[version]`
 
 - in project folder create a python file `app.py`
 - the projects code will be provided in this file
@@ -92,7 +91,7 @@ from flask import render_template
 
 @app.route('/hello/')
 def hello():
-    return render_template('index.html)
+    return render_template('index.html')
 ```
 
 ```
@@ -129,6 +128,75 @@ def hello():
 	        /hello.html
 	```
 
+### Base Template
+
+- this base framework can be implimented to all other pages as needed
+- the html pages where the same basic format is required, will be extended from this base template
+- first create a base template html file (eg: base.html)
+- use placeholders to specify where other blocks/contents will be placed
+
+```
+<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Flask</title>
+
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+	</head>
+	<body>
+		{% block body %}
+		{% endblock %}
+	</body>
+</html>
+```
+
+- extend this template in all the new HTML files where this same base format is required
+
+```
+{% extends 'base.html' %}
+{% block body %}
+    <h1>Heading</h1>
+    <!-- all elements as required -->
+{% endblock %}
+```
+
+### Importing HTML
+
+Section of template can be created separately and then later combined using include. That is `{% include 'section.html' %}`. Given below is an exmaple of the same.
+
+```
+<!-- base.html -->
+
+<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Flask</title>
+
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+	</head>
+	<body>
+		{% include 'nav.html' %}
+		
+		{% block body %}
+		{% endblock %}
+	</body>
+</html>
+```
+
+```
+<1-- nav.html -->
+
+<nav>
+    <ul>
+        <li>Home</li>
+        <li>Contact</li>
+    </ul>
+</nav>
+```
 
 ## Passing Values
 
@@ -188,6 +256,140 @@ def hello(name=None):
 </html>
 ```
 
+## Jinja
+
+Jinja is a web template engine for the Python programming language. It was created by Armin Ronacher and is licensed under a BSD License. Jinja is similar to the Django template engine but provides Python-like expressions while ensuring that the templates are evaluated in a sandbox.
+
+### Placing values
+
+- to simple place a value, mention the variable name within double curly brackets
+
+```
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Test</title>
+	</head>
+	<body>
+		<h2>This is a template page - {{ name }}</h2>
+	</body>
+</html>
+```
+
+### Conditional
+
+As Jinja allows Python-like expressions to be evaluated in the template, it can be used to make conditional decisions.
+
+```
+from flask import render_template
+
+@app.route('/hello/<name>')
+def hello(name=None):
+    return render_template('index.html', name=name, isActive=True)
+```
+
+```
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Test</title>
+	</head>
+	<body>
+		{% if isActive %}
+			<h2>Name - {{ name }}</h2>
+		{% else %}
+			<h2>Name not provided</h2>
+		{% endif %}
+	</body>
+</html>
+```
+
+### Looping
+
+Iterable objects can also be looped through to display as required.
+
+```
+from flask import render_template
+
+@app.route('/hello')
+def hello():
+	names = ['name1', 'name2', 'name3']
+    return render_template('index.html', names=names)
+```
+
+```
+<ul>
+	{% for i in names %}
+		<li>{{ i }}</li>
+	{% endfor %}
+</ul>
+```
+
+### Object Rendering
+
+The main object is iterated through and then evaluated as needed.
+
+```
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    books = [
+        {'name': 'The Great Gatsby', 'author': 'F. Scott Fitzgerald', 'cover': 'https://...._V1_.jpg'},
+        {'name': 'Jane Eyre', 'author': 'Charlotte Brontë', 'cover': 'https://...U70Aw9IS.jpg'},
+        {'name': 'Anna Karenina', 'author': 'Leo Tolstoy', 'cover': 'https://...MzkwOA._V1_.jpg'}
+    ]
+    
+    return render_template('index.html', books=books)
+
+app.run(debug=True)
+```
+
+```
+<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Templates</title>
+	</head>
+	<body>
+		<h3>Books</h3>
+		<ul>
+			{% for book in books %}
+				<div>
+					<h2>{{ book.name }}</h2>
+					<h4>{{ book.author }}</h4>
+					<img src="{{ book.cover }}" width="200px">
+				</div>
+			{% endfor %}
+		</ul>
+	</body>
+</html>
+```
+
+## Static Files
+
+These are fixed cotent files such as css, js and such. They are placed in a separate folder named as `static` just as in the case of templates. But the linking of files is done in Jinja url format.
+
+```
+// main.css file in static folder
+
+p {
+	color: red;
+}
+```
+
+```
+<!-- in HTML template file -->
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+```
+
 ## Debug Mode
 
 By enabling debug mode, the server will automatically reload if code changes, and will show an interactive debugger in the browser if an error occurs during a request. When turned off, in case of errors it just shows a message "Internal Server Error"
@@ -213,4 +415,9 @@ The following are some sample projects created based on the above documentation.
 
 | # | Name | Action |
 |---|---|---|
-| 1 |  | [Go to code]() |
+| 1 | Dynamic template | [Go to code]() |
+| 2 | Conditionals in template | [Go to code]() |
+| 3 | Looping in template | [Go to code]() |
+| 4 | Object Rendering | [Go to code]() |
+| 5 | Bootstrap | [Go to code]() |
+| 6 | Static Files | [Go to code]() |
