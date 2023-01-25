@@ -415,9 +415,9 @@ The following are some sample projects created based on the above documentation.
 
 | # | Name | Action |
 |---|---|---|
-| 1 | Dynamic template | [Go to code]() |
-| 2 | Conditionals in template | [Go to code]() |
-| 3 | Looping in template | [Go to code]() |
-| 4 | Object Rendering | [Go to code]() |
-| 5 | Bootstrap | [Go to code]() |
-| 6 | Static Files | [Go to code]() |
+| 1 | Dynamic template | [Go to code](https://github.com/jothomas1996/flask_basics/tree/main/basic_template) |
+| 2 | Conditionals in template | [Go to code](https://github.com/jothomas1996/flask_basics/tree/main/conditional) |
+| 3 | Looping in template | [Go to code](https://github.com/jothomas1996/flask_basics/tree/main/looping) |
+| 4 | Object Rendering | [Go to code](https://github.com/jothomas1996/flask_basics/tree/main/object_rendering) |
+| 5 | Bootstrap | [Go to code](https://github.com/jothomas1996/flask_basics/tree/main/bootstrap) |
+| 6 | Static Files | [Go to code](https://github.com/jothomas1996/flask_basics/tree/main/static_files) |
